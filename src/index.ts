@@ -1,6 +1,9 @@
-export * from './Game'
-export * from './entities/GameObject'
-export * from './entities/PhysicsBasedObject'
-export * from './entities/Spawner'
-export * from './input/KeyboardInput'
-export * from './math/Vector2D'
+export * from './animation';
+export * from './core';
+export * from './entities';
+export * from './input';
+export * from './math';
+export * from './physics';
+export * from './scenes';
+export * from './utils';
+
