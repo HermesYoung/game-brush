@@ -1,6 +1,6 @@
 {
-  "name": "gamebrush",
-  "version": "1.0.0",
+  "name": "game-brush",
+  "version": "0.0.1",
   "description": "A modular 2D game engine in TypeScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
