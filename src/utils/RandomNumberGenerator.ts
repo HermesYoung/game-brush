@@ -1,5 +1,4 @@
-﻿import {Boundary} from "../math/Boundary.js";
-import {Vector2D} from "../math/Vector2D";
+﻿import {Boundary, Vector2D} from "../math";
 
 export class RandomNumberGenerator {
     static int(min: number, max: number): number {

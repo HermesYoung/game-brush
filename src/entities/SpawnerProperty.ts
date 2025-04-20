@@ -1,4 +1,4 @@
-﻿import {Boundary} from "../math/Boundary.js";
+﻿import {Boundary} from "../math";
 
 export interface SpawnerProperty {
     spawnInterval: number;

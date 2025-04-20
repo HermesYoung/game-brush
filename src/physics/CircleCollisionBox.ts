@@ -1,6 +1,5 @@
 ﻿import {CollisionBox} from './CollisionBox.js';
-import {Vector2D} from '../math/Vector2D.js';
-import {Vector2DUtils} from '../math/Vector2DUtils.js';
+import {Vector2D, Vector2DUtils} from '../math';
 import {RectangleCollisionBox} from './RectangleCollisionBox.js';
 
 export class CircleCollisionBox implements CollisionBox {

@@ -1,6 +1,5 @@
 import { Animation } from './Animation.js';
-
-import {Vector2D} from "../math/Vector2D";
+import {Vector2D} from "../math";
 
 export class SpriteAnimator {
   private animations: Map<string, Animation> = new Map();

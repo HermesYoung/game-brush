@@ -1,5 +1,4 @@
-import { Vector2D } from "../math/Vector2D.js";
-import {Vector2DUtils} from "../math/Vector2DUtils.js";
+import { Vector2D, Vector2DUtils } from "../math";
 
 class LinearMotion {
   velocity: Vector2D = { x: 0, y: 0 };

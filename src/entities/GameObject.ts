@@ -1,5 +1,5 @@
-import {Vector2D} from "../math/Vector2D";
-import {CollisionBox} from "../physics/CollisionBox.js";
+import {Vector2D} from "../math";
+import {CollisionBox} from "../physics";
 
 export abstract class GameObject {
   position: Vector2D = { x: 0, y: 0 };

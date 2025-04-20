@@ -1,5 +1,5 @@
-﻿import {Boundary} from "../math/Boundary";
-import {SceneManager} from "../scenes/SceneManager";
+﻿import {Boundary} from "../math";
+import {SceneManager} from "../scenes";
 
 export class Game {
     private readonly ctx: CanvasRenderingContext2D;

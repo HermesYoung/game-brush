@@ -1,5 +1,5 @@
 ﻿import {PhysicsBasedObject} from "../PhysicsBasedObject.js";
-import {CollisionBox} from "../../physics/CollisionBox.js";
+import {CollisionBox} from "../../physics";
 
 export abstract class RectangleGameObject extends PhysicsBasedObject{
     width: number;

@@ -1,5 +1,5 @@
-import { GameObject } from '../entities/GameObject.js';
-import {Boundary} from "../math/Boundary";
+import { GameObject } from '../entities';
+import {Boundary} from "../math";
 
 export abstract class Scene {
   protected gameObjects: GameObject[] = [];

@@ -1,6 +1,6 @@
 ﻿import {Controller} from "./Controller.js";
 import {KeyboardInput} from "./KeyboardInput.js";
-import {PhysicsBasedObject} from "../entities/PhysicsBasedObject";
+import {PhysicsBasedObject} from "../entities";
 
 export abstract class KeyBoardController implements Controller {
     protected keyMap: Map<string, string[]>;

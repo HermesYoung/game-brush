@@ -1,4 +1,4 @@
-import { Vector2D } from "../math/Vector2D.js";
+import { Vector2D } from "../math";
 
 export interface CollisionBox {
     position: Vector2D;

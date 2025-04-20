@@ -1,5 +1,4 @@
-﻿import {Vector2D} from "../math/Vector2D";
-import {Boundary} from "../math/Boundary.js";
+﻿import {Vector2D, Boundary} from "../math";
 
 export class RangeDetector {
     static isInRange(position : Vector2D, boundary : Boundary):boolean {
