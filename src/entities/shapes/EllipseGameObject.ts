@@ -5,8 +5,8 @@ export abstract class EllipseGameObject extends PhysicsBasedObject{
     radiusX: number;
     radiusY: number;
     rotation: number;
-    protected constructor(position: {x: number, y: number}, radiusX: number, radiusY: number, rotation: number) {
-        super(position);
+    protected constructor(position: {x: number, y: number}, radiusX: number, radiusY: number, rotation: number, collisionBoxes: [] = []) {
+        super(position, rotation ,collisionBoxes);
         this.radiusX = radiusX;
         this.radiusY = radiusY;
         this.rotation = rotation;
