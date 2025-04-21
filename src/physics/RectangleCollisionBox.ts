@@ -1,6 +1,6 @@
 ﻿import { CollisionBox } from './CollisionBox.js';
 import { Vector2DUtils, Vector2D } from '../math';
-import { CircleCollisionBox } from './CircleCollisionBox.js';
+import {EllipseCollisionBox} from "./EllipseCollisionBox";
 
 export class RectangleCollisionBox implements CollisionBox {
     position: Vector2D;
@@ -91,9 +91,9 @@ export class RectangleCollisionBox implements CollisionBox {
     }
 
     collidesWith(other: CollisionBox): boolean {
-        if ('width' in other && 'height' in other) {
+        if (other instanceof RectangleCollisionBox) {
             return this.satTest(other as RectangleCollisionBox);
-        } else if (other instanceof CircleCollisionBox) {
+        } else if (other instanceof EllipseCollisionBox) {
             return other.collidesWith(this);
         }
         return false;
@@ -124,7 +124,7 @@ export class RectangleCollisionBox implements CollisionBox {
                 }
                 return Vector2DUtils.add(this.position, Vector2DUtils.multiply(mtv, minOverlap / 2));
             }
-        } else if (other instanceof CircleCollisionBox) {
+        } else if (other instanceof EllipseCollisionBox) {
             const x = Math.max(this.position.x - this.width / 2, Math.min(other.position.x, this.position.x + this.width / 2));
             const y = Math.max(this.position.y - this.height / 2, Math.min(other.position.y, this.position.y + this.height / 2));
             return { x, y };
