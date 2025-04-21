@@ -1,6 +1,7 @@
-﻿import { CollisionBox } from './CollisionBox.js';
-import { Vector2DUtils, Vector2D } from '../math';
+﻿import {CollisionBox} from './CollisionBox.js';
+import {Vector2DUtils, Vector2D} from '../math';
 import {EllipseCollisionBox} from "./EllipseCollisionBox";
+import {CollisionManager} from "./CollisionManager";
 
 export class RectangleCollisionBox implements CollisionBox {
     position: Vector2D;
@@ -26,10 +27,10 @@ export class RectangleCollisionBox implements CollisionBox {
         const center = this.position;
 
         const corners = [
-            { x: -hw, y: -hh },
-            { x: hw, y: -hh },
-            { x: hw, y: hh },
-            { x: -hw, y: hh }
+            {x: -hw, y: -hh},
+            {x: hw, y: -hh},
+            {x: hw, y: hh},
+            {x: -hw, y: hh}
         ];
 
         return corners.map(corner => {
@@ -64,22 +65,7 @@ export class RectangleCollisionBox implements CollisionBox {
             if (projection < min) min = projection;
             if (projection > max) max = projection;
         }
-        return { min, max };
-    }
-
-    satTest(other: RectangleCollisionBox): boolean {
-        const axes1 = this.getAxes();
-        const axes2 = other.getAxes();
-        const axes = axes1.concat(axes2);
-
-        for (const axis of axes) {
-            const proj1 = this.projectOntoAxis(axis);
-            const proj2 = other.projectOntoAxis(axis);
-            if (proj1.max < proj2.min || proj2.max < proj1.min) {
-                return false;
-            }
-        }
-        return true;
+        return {min, max};
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
@@ -95,12 +81,7 @@ export class RectangleCollisionBox implements CollisionBox {
     }
 
     collidesWith(other: CollisionBox): boolean {
-        if (other instanceof RectangleCollisionBox) {
-            return this.satTest(other as RectangleCollisionBox);
-        } else if (other instanceof EllipseCollisionBox) {
-            return other.collidesWith(this);
-        }
-        return false;
+        return CollisionManager.checkCollision(this, other);
     }
 
     getCollisionPoint(other: CollisionBox): Vector2D | null {

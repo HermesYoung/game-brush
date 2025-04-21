@@ -1,6 +1,7 @@
 ﻿import {Vector2D, Vector2DUtils} from "../math";
 import { CollisionBox } from "./CollisionBox";
 import { RectangleCollisionBox } from "./RectangleCollisionBox";
+import {CollisionManager} from "./CollisionManager";
 
 export class EllipseCollisionBox implements CollisionBox {
     position: Vector2D;
@@ -16,65 +17,7 @@ export class EllipseCollisionBox implements CollisionBox {
     }
 
     collidesWith(other: CollisionBox): boolean {
-        if (other instanceof RectangleCollisionBox) {
-            const transformToEllipseSpace = (point: Vector2D): Vector2D => {
-                let p = Vector2DUtils.subtract(point, this.position);
-                p = Vector2DUtils.rotate(p, -this.rotation);
-                return {
-                    x: p.x / this.radiusX,
-                    y: p.y / this.radiusY
-                };
-            };
-
-            const halfW = other.width / 2;
-            const halfH = other.height / 2;
-            const corners = [
-                { x: -halfW, y: -halfH },
-                { x:  halfW, y: -halfH },
-                { x:  halfW, y:  halfH },
-                { x: -halfW, y:  halfH }
-            ];
-
-            const worldCorners = corners.map(corner =>
-                Vector2DUtils.add(
-                    Vector2DUtils.rotate(corner, other.rotation),
-                    other.position
-                )
-            );
-
-            const ellipseSpaceCorners = worldCorners.map(transformToEllipseSpace);
-
-            const axes: Vector2D[] = [
-                Vector2DUtils.normalize(Vector2DUtils.subtract(ellipseSpaceCorners[1], ellipseSpaceCorners[0])),
-                Vector2DUtils.normalize(Vector2DUtils.subtract(ellipseSpaceCorners[3], ellipseSpaceCorners[0])),
-                Vector2DUtils.normalize(ellipseSpaceCorners[0])
-            ];
-
-            for (const axis of axes) {
-                let minA = Infinity, maxA = -Infinity;
-                for (const corner of ellipseSpaceCorners) {
-                    const proj = Vector2DUtils.dot(corner, axis);
-                    minA = Math.min(minA, proj);
-                    maxA = Math.max(maxA, proj);
-                }
-
-                const minB = -1, maxB = 1;
-                if (maxA < minB || maxB < minA) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        if (other instanceof EllipseCollisionBox) {
-            const rotatedOtherPos = Vector2DUtils.rotate(Vector2DUtils.subtract(other.position, this.position), -this.rotation);
-            const dx = rotatedOtherPos.x / this.radiusX;
-            const dy = rotatedOtherPos.y / this.radiusY;
-            return dx * dx + dy * dy <= 1;
-        }
-
-        return false;
+        return CollisionManager.checkCollision(this, other);
     }
 
     getCollisionPoint(other: CollisionBox): Vector2D | null {
