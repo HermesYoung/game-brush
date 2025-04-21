@@ -1,4 +1,4 @@
 ﻿export * from './CollisionBox';
-export * from './CircleCollisionBox';
+export * from './EllipseCollisionBox';
 export * from './PhysicsComponent';
 export * from './RectangleCollisionBox';
