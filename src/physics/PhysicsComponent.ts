@@ -92,9 +92,10 @@ export class PhysicsComponent {
     this.angular = new AngularMotion(momentOfInertia, angularDamping);
   }
 
-  update(position: Vector2D, deltaTime: number): void {
+  update(position: Vector2D, deltaTime: number): {position: Vector2D, rotation: number} {
     this.linear.update(position, deltaTime);
     this.angular.update(deltaTime);
+    return {position, rotation: this.angular.rotation};
   }
 
   applyForce(force: Vector2D): void {

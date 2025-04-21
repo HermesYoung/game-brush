@@ -1,25 +1,36 @@
 ﻿import {PhysicsBasedObject} from "../PhysicsBasedObject.js";
 import {CollisionBox} from "../../physics";
+import {CanvasRectangleProps, RectangleDrawer} from "../../graphic";
+import {Vector2D} from "../../math";
 
 export abstract class RectangleGameObject extends PhysicsBasedObject{
-    width: number;
-    height: any;
-    color: string;
+    protected drawer: RectangleDrawer;
 
-    protected constructor(position: {x: number, y: number}, width: number, height: number, color: string,rotation: number ,collisionBoxes: CollisionBox[] = []) {
+    protected constructor(position:Vector2D, rotation: number,properties : CanvasRectangleProps ,collisionBoxes: CollisionBox[] = []) {
         super(position, rotation ,collisionBoxes);
-        this.width = width;
-        this.height = height;
-        this.color = color;
+        this.position = position;
+        this.rotation = rotation;
+        this.drawer = new RectangleDrawer(position, rotation, properties);
+
+    }
+
+    resize(width: number, height: number) {
+        this.drawer.resize(width, height);
+    }
+    setColor(color: string) {
+        this.drawer.setColor(color);
+    }
+    setOpacity(opacity: number) {
+        this.drawer.setOpacity(opacity);
+    }
+
+    abstract updateBeforePhysics(deltaTime: number): void;
+
+    update(deltaTime: number): void {
+        super.update(deltaTime);
     }
     draw(ctx: CanvasRenderingContext2D): void {
-        ctx.save();
-        ctx.translate(this.position.x, this.position.y);
-        ctx.rotate(this.physicsComponent.angular.rotation);
-        ctx.fillStyle = this.color;
-        ctx.fillRect(-this.width / 2, -this.height / 2,this.width, this.height);
-        ctx.restore();
+        this.drawer.update(this.position, this.rotation);
+        this.drawer.draw(ctx);
     }
-
-    abstract update(deltaTime: number): void ;
 }

@@ -9,4 +9,14 @@ export abstract class PhysicsBasedObject extends GameObject {
         super(Position, rotation, collisionBoxes);
         this.physicsComponent = new PhysicsComponent();
     }
+
+    abstract updateBeforePhysics(deltaTime: number): void ;
+
+    update(deltaTime: number): void {
+        this.updateBeforePhysics(deltaTime);
+        let updateResult = this.physicsComponent.update(this.position, deltaTime);
+        this.position = updateResult.position;
+        this.rotation = updateResult.rotation;
+        this.updateCollisionBox()
+    }
 }
