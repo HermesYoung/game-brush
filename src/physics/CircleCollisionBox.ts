@@ -1,15 +1,101 @@
-﻿import {CollisionBox} from './CollisionBox.js';
-import {Vector2D, Vector2DUtils} from '../math';
-import {RectangleCollisionBox} from './RectangleCollisionBox.js';
+﻿import {Vector2D, Vector2DUtils} from "../math";
+import {CollisionBox} from "./CollisionBox";
+import {RectangleCollisionBox} from "./RectangleCollisionBox";
 
-export class CircleCollisionBox implements CollisionBox {
+function rotatePoint(point: Vector2D, center: Vector2D, rotation: number): Vector2D {
+    return Vector2DUtils.add(
+        Vector2DUtils.rotate(Vector2DUtils.subtract(point, center), rotation),
+        center
+    );
+}
+
+export class EllipseCollisionBox implements CollisionBox {
     position: Vector2D;
-    radius: number;
     rotation: number = 0;
+    radiusX: number;
+    radiusY: number;
 
-    constructor(position: Vector2D, radius: number) {
+    constructor(position: Vector2D, radiusX: number, radiusY: number, rotation: number = 0) {
         this.position = position;
-        this.radius = radius;
+        this.radiusX = radiusX;
+        this.radiusY = radiusY;
+        this.rotation = rotation;
+    }
+
+    collidesWith(other: CollisionBox): boolean {
+        const selfCenter = this.position;
+        const rotatedOtherPos = rotatePoint(other.position, selfCenter, -this.rotation);
+
+        if (other instanceof EllipseCollisionBox) {
+            const dx = (rotatedOtherPos.x - selfCenter.x) / this.radiusX;
+            const dy = (rotatedOtherPos.y - selfCenter.y) / this.radiusY;
+            return dx * dx + dy * dy <= 1;
+        }
+
+        if (other instanceof RectangleCollisionBox) {
+            const worldToSelf = (point: Vector2D) => rotatePoint(point, selfCenter, -this.rotation);
+            const localRectCenter = worldToSelf(other.position);
+
+            const halfW = other.width / 2;
+            const halfH = other.height / 2;
+
+            const corners = [
+                { x: -halfW, y: -halfH },
+                { x: halfW, y: -halfH },
+                { x: halfW, y: halfH },
+                { x: -halfW, y: halfH }
+            ].map(corner => Vector2DUtils.rotate(corner, other.rotation));
+
+            const transformedCorners = corners.map(c => worldToSelf(
+                Vector2DUtils.add(c, other.position)
+            ));
+
+            for (const corner of transformedCorners) {
+                const dx = (corner.x - selfCenter.x) / this.radiusX;
+                const dy = (corner.y - selfCenter.y) / this.radiusY;
+                if (dx * dx + dy * dy <= 1) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return false;
+    }
+
+    getCollisionPoint(other: CollisionBox): Vector2D | null {
+        if (!this.collidesWith(other)) return null;
+
+        const selfCenter = this.position;
+        const rotatedOtherPos = rotatePoint(other.position, selfCenter, -this.rotation);
+
+        if (other instanceof EllipseCollisionBox) {
+            const delta = Vector2DUtils.subtract(rotatedOtherPos, selfCenter);
+            const norm = Math.sqrt(
+                (delta.x * delta.x) / (this.radiusX * this.radiusX) +
+                (delta.y * delta.y) / (this.radiusY * this.radiusY)
+            );
+            const unit = Vector2DUtils.divide(delta, norm);
+
+            return rotatePoint(Vector2DUtils.add(selfCenter, unit), selfCenter, this.rotation);
+        }
+
+        if (other instanceof RectangleCollisionBox) {
+            const worldToSelf = (point: Vector2D) => rotatePoint(point, selfCenter, -this.rotation);
+            const localRectCenter = worldToSelf(other.position);
+
+            const halfW = other.width / 2;
+            const halfH = other.height / 2;
+
+            const clampedX = Math.max(-halfW, Math.min(localRectCenter.x - selfCenter.x, halfW));
+            const clampedY = Math.max(-halfH, Math.min(localRectCenter.y - selfCenter.y, halfH));
+
+            const closestPoint = Vector2DUtils.add(selfCenter, { x: clampedX, y: clampedY });
+            return rotatePoint(closestPoint, selfCenter, this.rotation);
+        }
+
+        return null;
     }
 
     reset(position: Vector2D, rotation: number): void {
@@ -17,76 +103,14 @@ export class CircleCollisionBox implements CollisionBox {
         this.rotation = rotation;
     }
 
-    collidesWith(other: CollisionBox): boolean {
-        if (other instanceof CircleCollisionBox) {
-            const distSq = Vector2DUtils.distanceSquared(this.position, other.position);
-            const radiusSum = this.radius + other.radius;
-            return distSq <= radiusSum * radiusSum;
-        } else if (other instanceof RectangleCollisionBox) {
-            const axes = other.getAxes();
-            axes.push(Vector2DUtils.normalize(Vector2DUtils.subtract(this.position, other.position)));
-
-            for (const axis of axes) {
-                const proj1 = this.projectOntoAxis(axis);
-                const proj2 = other.projectOntoAxis(axis);
-                if (proj1.max < proj2.min || proj2.max < proj1.min) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
-    projectOntoAxis(axis: Vector2D): { min: number; max: number } {
-        const centerProjection = Vector2DUtils.dot(this.position, axis);
-        return {
-            min: centerProjection - this.radius,
-            max: centerProjection + this.radius
-        };
-    }
-
-    getCollisionPoint(other: CollisionBox): Vector2D | null {
-        if (!this.collidesWith(other)) return null;
-
-        if (other instanceof CircleCollisionBox) {
-            const direction = Vector2DUtils.subtract(other.position, this.position);
-            const normalized = Vector2DUtils.normalize(direction);
-            return Vector2DUtils.add(this.position, Vector2DUtils.multiply(normalized, this.radius));
-        } else if (other instanceof RectangleCollisionBox) {
-            const axes = other.getAxes();
-            axes.push(Vector2DUtils.normalize(Vector2DUtils.subtract(this.position, other.position)));
-
-            let smallestOverlap = Infinity;
-            let smallestAxis: Vector2D | null = null;
-
-            for (const axis of axes) {
-                const proj1 = this.projectOntoAxis(axis);
-                const proj2 = other.projectOntoAxis(axis);
-                const overlap = Math.min(proj1.max, proj2.max) - Math.max(proj1.min, proj2.min);
-
-                if (overlap <= 0) return null;
-                if (overlap < smallestOverlap) {
-                    smallestOverlap = overlap;
-                    smallestAxis = axis;
-                }
-            }
-
-            if (smallestAxis) {
-                const direction = Vector2DUtils.normalize(Vector2DUtils.subtract(this.position, other.position));
-                const penetrationVector = Vector2DUtils.multiply(smallestAxis, smallestOverlap);
-                const sign = Vector2DUtils.dot(direction, smallestAxis) < 0 ? -1 : 1;
-                return Vector2DUtils.subtract(this.position, Vector2DUtils.multiply(penetrationVector, 0.5 * sign));
-            }
-        }
-
-        return null;
-    }
-
-    draw(ctx: CanvasRenderingContext2D): void {
-        ctx.beginPath();
-        ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
-        ctx.strokeStyle = 'blue';
-        ctx.stroke();
+    draw(context: CanvasRenderingContext2D): void {
+        context.save();
+        context.translate(this.position.x, this.position.y);
+        context.rotate(this.rotation);
+        context.beginPath();
+        context.ellipse(0, 0, this.radiusX, this.radiusY, 0, 0, Math.PI * 2);
+        context.strokeStyle = "red";
+        context.stroke();
+        context.restore();
     }
 }
