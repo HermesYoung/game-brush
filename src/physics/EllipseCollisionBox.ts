@@ -34,7 +34,6 @@ export class EllipseCollisionBox implements CollisionBox {
 
         if (other instanceof RectangleCollisionBox) {
             const worldToSelf = (point: Vector2D) => rotatePoint(point, selfCenter, -this.rotation);
-            const localRectCenter = worldToSelf(other.position);
 
             const halfW = other.width / 2;
             const halfH = other.height / 2;
