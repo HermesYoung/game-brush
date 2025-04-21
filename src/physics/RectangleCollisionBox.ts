@@ -45,10 +45,14 @@ export class RectangleCollisionBox implements CollisionBox {
             const p1 = corners[i];
             const p2 = corners[(i + 1) % corners.length];
             const edge = Vector2DUtils.subtract(p2, p1);
-            const normal = Vector2DUtils.normalize({ x: -edge.y, y: edge.x }); // perpendicular
+            const normal = Vector2DUtils.normalize(this.getNormalVector(edge));
             axes.push(normal);
         }
         return axes;
+    }
+
+    private getNormalVector(edge: Vector2D) {
+        return {x: -edge.y, y: edge.x};
     }
 
     projectOntoAxis(axis: Vector2D): { min: number; max: number } {
