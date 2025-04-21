@@ -1,17 +1,10 @@
 ﻿import {Vector2D, Vector2DUtils} from "../math";
-import {CollisionBox} from "./CollisionBox";
-import {RectangleCollisionBox} from "./RectangleCollisionBox";
-
-function rotatePoint(point: Vector2D, center: Vector2D, rotation: number): Vector2D {
-    return Vector2DUtils.add(
-        Vector2DUtils.rotate(Vector2DUtils.subtract(point, center), rotation),
-        center
-    );
-}
+import { CollisionBox } from "./CollisionBox";
+import { RectangleCollisionBox } from "./RectangleCollisionBox";
 
 export class EllipseCollisionBox implements CollisionBox {
     position: Vector2D;
-    rotation: number = 0;
+    rotation: number;
     radiusX: number;
     radiusY: number;
 
@@ -23,41 +16,62 @@ export class EllipseCollisionBox implements CollisionBox {
     }
 
     collidesWith(other: CollisionBox): boolean {
-        const selfCenter = this.position;
-        const rotatedOtherPos = rotatePoint(other.position, selfCenter, -this.rotation);
-
-        if (other instanceof EllipseCollisionBox) {
-            const dx = (rotatedOtherPos.x - selfCenter.x) / this.radiusX;
-            const dy = (rotatedOtherPos.y - selfCenter.y) / this.radiusY;
-            return dx * dx + dy * dy <= 1;
-        }
-
         if (other instanceof RectangleCollisionBox) {
-            const worldToSelf = (point: Vector2D) => rotatePoint(point, selfCenter, -this.rotation);
+            const transformToEllipseSpace = (point: Vector2D): Vector2D => {
+                let p = Vector2DUtils.subtract(point, this.position);
+                p = Vector2DUtils.rotate(p, -this.rotation);
+                return {
+                    x: p.x / this.radiusX,
+                    y: p.y / this.radiusY
+                };
+            };
 
             const halfW = other.width / 2;
             const halfH = other.height / 2;
-
             const corners = [
                 { x: -halfW, y: -halfH },
-                { x: halfW, y: -halfH },
-                { x: halfW, y: halfH },
-                { x: -halfW, y: halfH }
-            ].map(corner => Vector2DUtils.rotate(corner, other.rotation));
+                { x:  halfW, y: -halfH },
+                { x:  halfW, y:  halfH },
+                { x: -halfW, y:  halfH }
+            ];
 
-            const transformedCorners = corners.map(c => worldToSelf(
-                Vector2DUtils.add(c, other.position)
-            ));
+            const worldCorners = corners.map(corner =>
+                Vector2DUtils.add(
+                    Vector2DUtils.rotate(corner, other.rotation),
+                    other.position
+                )
+            );
 
-            for (const corner of transformedCorners) {
-                const dx = (corner.x - selfCenter.x) / this.radiusX;
-                const dy = (corner.y - selfCenter.y) / this.radiusY;
-                if (dx * dx + dy * dy <= 1) {
-                    return true;
+            const ellipseSpaceCorners = worldCorners.map(transformToEllipseSpace);
+
+            const axes: Vector2D[] = [
+                Vector2DUtils.normalize(Vector2DUtils.subtract(ellipseSpaceCorners[1], ellipseSpaceCorners[0])),
+                Vector2DUtils.normalize(Vector2DUtils.subtract(ellipseSpaceCorners[3], ellipseSpaceCorners[0])),
+                Vector2DUtils.normalize(ellipseSpaceCorners[0])
+            ];
+
+            for (const axis of axes) {
+                let minA = Infinity, maxA = -Infinity;
+                for (const corner of ellipseSpaceCorners) {
+                    const proj = Vector2DUtils.dot(corner, axis);
+                    minA = Math.min(minA, proj);
+                    maxA = Math.max(maxA, proj);
+                }
+
+                const minB = -1, maxB = 1;
+                if (maxA < minB || maxB < minA) {
+                    return false;
                 }
             }
 
-            return false;
+            return true;
+        }
+
+        if (other instanceof EllipseCollisionBox) {
+            const rotatedOtherPos = Vector2DUtils.rotate(Vector2DUtils.subtract(other.position, this.position), -this.rotation);
+            const dx = rotatedOtherPos.x / this.radiusX;
+            const dy = rotatedOtherPos.y / this.radiusY;
+            return dx * dx + dy * dy <= 1;
         }
 
         return false;
@@ -66,32 +80,28 @@ export class EllipseCollisionBox implements CollisionBox {
     getCollisionPoint(other: CollisionBox): Vector2D | null {
         if (!this.collidesWith(other)) return null;
 
-        const selfCenter = this.position;
-        const rotatedOtherPos = rotatePoint(other.position, selfCenter, -this.rotation);
+        const toLocal = (point: Vector2D): Vector2D =>
+            Vector2DUtils.rotate(Vector2DUtils.subtract(point, this.position), -this.rotation);
+
+        const toWorld = (point: Vector2D): Vector2D =>
+            Vector2DUtils.add(Vector2DUtils.rotate(point, this.rotation), this.position);
 
         if (other instanceof EllipseCollisionBox) {
-            const delta = Vector2DUtils.subtract(rotatedOtherPos, selfCenter);
-            const norm = Math.sqrt(
-                (delta.x * delta.x) / (this.radiusX * this.radiusX) +
-                (delta.y * delta.y) / (this.radiusY * this.radiusY)
-            );
-            const unit = Vector2DUtils.divide(delta, norm);
-
-            return rotatePoint(Vector2DUtils.add(selfCenter, unit), selfCenter, this.rotation);
+            const delta = toLocal(other.position);
+            const norm = Math.sqrt((delta.x * delta.x) / (this.radiusX * this.radiusX) + (delta.y * delta.y) / (this.radiusY * this.radiusY));
+            const direction = Vector2DUtils.divide(delta, norm);
+            return toWorld(direction);
         }
 
         if (other instanceof RectangleCollisionBox) {
-            const worldToSelf = (point: Vector2D) => rotatePoint(point, selfCenter, -this.rotation);
-            const localRectCenter = worldToSelf(other.position);
-
-            const halfW = other.width / 2;
-            const halfH = other.height / 2;
-
-            const clampedX = Math.max(-halfW, Math.min(localRectCenter.x - selfCenter.x, halfW));
-            const clampedY = Math.max(-halfH, Math.min(localRectCenter.y - selfCenter.y, halfH));
-
-            const closestPoint = Vector2DUtils.add(selfCenter, { x: clampedX, y: clampedY });
-            return rotatePoint(closestPoint, selfCenter, this.rotation);
+            const local = toLocal(other.position);
+            const norm = Math.sqrt(local.x * local.x + local.y * local.y);
+            const direction = Vector2DUtils.divide(local, norm);
+            const scaled = {
+                x: direction.x * this.radiusX,
+                y: direction.y * this.radiusY
+            };
+            return toWorld(scaled);
         }
 
         return null;
