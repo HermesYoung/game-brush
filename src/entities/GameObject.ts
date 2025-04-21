@@ -3,11 +3,13 @@ import {CollisionBox} from "../physics";
 
 export abstract class GameObject {
   position: Vector2D = { x: 0, y: 0 };
+  rotation: number = 0;
   isDestroyed: boolean = false;
   collisionBoxes: CollisionBox[] = [];
 
-  protected constructor(position?: Vector2D, collisionBoxes?: CollisionBox[]) {
+  protected constructor(position?: Vector2D, rotation?: number ,collisionBoxes?: CollisionBox[]) {
     this.position = position || { x: 0, y: 0 };
+    this.rotation = rotation || 0;
     this.collisionBoxes = collisionBoxes || [];
   }
 

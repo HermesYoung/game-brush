@@ -6,8 +6,8 @@ export abstract class RectangleGameObject extends PhysicsBasedObject{
     height: any;
     color: string;
 
-    protected constructor(position: {x: number, y: number}, width: number, height: number, color: string,collisionBoxes: CollisionBox[] = []) {
-        super(position, collisionBoxes);
+    protected constructor(position: {x: number, y: number}, width: number, height: number, color: string,rotation: number ,collisionBoxes: CollisionBox[] = []) {
+        super(position, rotation ,collisionBoxes);
         this.width = width;
         this.height = height;
         this.color = color;
