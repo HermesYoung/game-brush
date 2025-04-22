@@ -1,8 +1,9 @@
 ﻿import {Controller} from "./Controller.js";
 import {KeyboardInput} from "./KeyboardInput.js";
-import {GameObject, PhysicsBasedObject} from "../entities";
+import {GameObject} from "../entities";
+import {Scene} from "../scenes";
 
-export abstract class KeyBoardController<TGameObject extends GameObject> implements Controller<TGameObject> {
+export abstract class KeyBoardController<TControllable extends GameObject | Scene> implements Controller<TControllable> {
     protected keyMap: Map<string, string[]>;
     private readonly defaultKeyMap: Map<string, string[]>;
     protected keyboardInput: KeyboardInput = new KeyboardInput();
@@ -11,7 +12,7 @@ export abstract class KeyBoardController<TGameObject extends GameObject> impleme
         this.defaultKeyMap = new Map(keyMap);
     }
 
-    abstract update(deltaTime: number, gameObject: TGameObject): void;
+    abstract update(deltaTime: number, gameObject: TControllable): void;
 
     defineNewKey(action: string, key: string): void {
         if (this.keyMap.has(action)) {

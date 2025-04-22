@@ -1,5 +1,6 @@
 ﻿import {GameObject} from "../entities";
+import {Scene} from "../scenes";
 
-export interface Controller<TGameObject extends GameObject>  {
-    update(deltaTime: number, gameObject: TGameObject) : void;
+export interface Controller<TControllable extends GameObject | Scene>  {
+    update(deltaTime: number, gameObject: TControllable) : void;
 }
