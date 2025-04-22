@@ -2,6 +2,7 @@ import {Transform2D, Vector2D} from "../math";
 import {CollisionBox} from "../physics";
 
 export abstract class GameObject {
+    layer: number = 0;
     transform: Transform2D;
     isDestroyed: boolean = false;
     collisionBoxes: CollisionBox[] = [];

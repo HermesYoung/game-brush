@@ -10,7 +10,7 @@ export abstract class Scene {
 
   update(deltaTime: number): void {
     this.gameObjects.forEach(obj => obj.update(deltaTime));
-    this.gameObjects = this.gameObjects.filter(obj => !obj.isDestroyed);
+    this.gameObjects = this.gameObjects.filter(obj => !obj.isDestroyed).sort((a, b) => a.layer - b.layer) ;
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
@@ -24,7 +24,8 @@ export abstract class Scene {
     this.gameObjects = [];
   }
 
-  addGameObject(obj: GameObject): void {
+  addGameObject(obj: GameObject, layer : number = 0): void {
+    obj.layer = layer;
     this.gameObjects.push(obj);
   }
 }
