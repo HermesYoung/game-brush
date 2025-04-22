@@ -6,15 +6,26 @@ export abstract class GameObject {
     transform: Transform2D;
     isDestroyed: boolean = false;
     collisionBoxes: CollisionBox[] = [];
+    children: GameObject[] = [];
 
-    protected constructor(transform?: Transform2D, collisionBoxes?: CollisionBox[]) {
-        this.transform = transform ?? {position: {x: 0, y: 0}, rotation: 0};
-        this.collisionBoxes = collisionBoxes || [];
+    protected constructor(transform?: Transform2D) {
+        this.transform = transform ?? new Transform2D({x: 0, y: 0});
     }
 
-    abstract update(deltaTime: number): void;
+    abstract updateObject(deltaTime: number): void;
 
-    abstract draw(ctx: CanvasRenderingContext2D): void;
+    update(deltaTime: number): void{
+        this.updateObject(deltaTime);
+        this.updateCollisionBox();
+        this.children.forEach(child => child.update(deltaTime));
+    }
+
+    abstract drawObject(ctx: CanvasRenderingContext2D): void;
+
+    draw(ctx: CanvasRenderingContext2D): void{
+        this.drawObject(ctx)
+        this.children.forEach(child => child.draw(ctx));
+    }
 
     destroy(): void {
         this.isDestroyed = true;
@@ -40,7 +51,17 @@ export abstract class GameObject {
 
     protected updateCollisionBox() {
         this.collisionBoxes.forEach(collisionBox => {
-            collisionBox.reset(this.transform)
+            collisionBox.reset(new Transform2D(this.transform.getWorldPosition(), this.transform.getWorldRotation()))
         })
+    }
+
+    addChild(child: GameObject): void {
+        child.transform.parent = this.transform;
+        this.children.push(child);
+    }
+
+    addCollisionBox(collisionBox: CollisionBox): void {
+        collisionBox.transform.parent = this.transform;
+        this.collisionBoxes.push(collisionBox);
     }
 }

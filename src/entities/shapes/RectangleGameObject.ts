@@ -1,13 +1,12 @@
 ﻿import {PhysicsBasedObject} from "../PhysicsBasedObject.js";
-import {CollisionBox} from "../../physics";
 import {CanvasRectangleProps, RectangleDrawer} from "../../graphic";
 import {Transform2D} from "../../math";
 
 export abstract class RectangleGameObject extends PhysicsBasedObject{
     protected drawer: RectangleDrawer;
 
-    protected constructor(transform: Transform2D,properties : CanvasRectangleProps ,collisionBoxes: CollisionBox[] = []) {
-        super(transform ,collisionBoxes);
+    protected constructor(transform: Transform2D,properties : CanvasRectangleProps ) {
+        super(transform);
         this.drawer = new RectangleDrawer(transform, properties);
 
     }
@@ -22,12 +21,7 @@ export abstract class RectangleGameObject extends PhysicsBasedObject{
         this.drawer.setOpacity(opacity);
     }
 
-    abstract updateBeforePhysics(deltaTime: number): void;
-
-    update(deltaTime: number): void {
-        super.update(deltaTime);
-    }
-    draw(ctx: CanvasRenderingContext2D): void {
+    drawObject(ctx: CanvasRenderingContext2D) {
         this.drawer.draw(ctx);
     }
 }

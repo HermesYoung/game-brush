@@ -54,8 +54,10 @@ export class SpriteSheet implements Drawable {
 
     draw(ctx: CanvasRenderingContext2D): void {
         ctx.save();
-        ctx.translate(this.transform.position.x, this.transform.position.y);
-        ctx.rotate(this.transform.rotation);
+        let position = this.transform.getWorldPosition();
+        let rotation = this.transform.getWorldRotation();
+        ctx.translate(position.x, position.y);
+        ctx.rotate(rotation);
 
         ctx.drawImage(
             this.image,

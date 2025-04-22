@@ -58,7 +58,7 @@ export class EllipseCollisionBox implements CollisionBox {
         context.rotate(this.transform.rotation);
         context.beginPath();
         context.ellipse(0, 0, this.radiusX, this.radiusY, 0, 0, Math.PI * 2);
-        context.strokeStyle = "red";
+        context.strokeStyle = "black";
         context.stroke();
         context.restore();
     }

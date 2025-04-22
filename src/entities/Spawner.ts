@@ -19,12 +19,17 @@ export abstract class Spawner extends GameObject {
       this.timeSinceLastSpawn = 0;
     }
 
-    this.updateObjects(deltaTime);
     this.cleanup();
+    super.update(deltaTime);
+  }
+
+  drawObject(ctx: CanvasRenderingContext2D) {
+    return
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
     this.objects.forEach(obj => obj.draw(ctx));
+    super.draw(ctx);
   }
 
   reset(): void {
@@ -37,6 +42,5 @@ export abstract class Spawner extends GameObject {
   }
 
   protected abstract spawn(): void;
-  protected abstract updateObjects(deltaTime: number): void;
   protected abstract cleanup(): void;
 }
