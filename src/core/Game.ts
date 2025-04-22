@@ -1,31 +1,43 @@
-﻿import {Boundary} from "../math";
-import {SceneManager} from "../scenes";
+﻿import {SceneManager} from "../scenes";
 
 export class Game {
     private readonly ctx: CanvasRenderingContext2D;
-    private readonly canvasBoundary: Boundary;
     private lastTime: number = 0;
+    private fps: number = 60;
+    private timestep: number = 1000 / this.fps;
+    private accumulator: number = 0;
 
     constructor(private canvas: HTMLCanvasElement, private sceneManager: SceneManager) {
         this.ctx = canvas.getContext('2d')!;
-        this.canvasBoundary = {
-            from: {x: 0, y: 0},
-            to: {x: canvas.width, y: canvas.height},
-        };
     }
 
     start(): void {
-
         requestAnimationFrame(this.loop);
     }
 
-    private loop = (timestamp: number): void => {
-        const deltaTime = (timestamp - this.lastTime) / 1000;
-        this.lastTime = timestamp;
+    setTargetFPS(fps: number){
+        this.fps = fps;
+        this.timestep = 1000 / fps;
+    }
 
-        this.sceneManager.update(deltaTime);
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.sceneManager.draw(this.ctx);
+    private loop = (timestamp: number): void => {
+        if(!this.lastTime) this.lastTime = timestamp;
+
+        const delta = timestamp - this.lastTime;
+        this.accumulator += delta;
+
+        if(this.accumulator >= this.timestep)
+        {
+            const deltaTime = this.timestep / 1000;
+            this.accumulator -= this.timestep;
+            this.sceneManager.update(deltaTime);
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.sceneManager.draw(this.ctx);
+
+            this.accumulator = 0;
+            this.lastTime = timestamp;
+        }
+
         requestAnimationFrame(this.loop);
     };
 }
