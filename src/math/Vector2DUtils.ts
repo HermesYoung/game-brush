@@ -64,4 +64,11 @@ export class Vector2DUtils {
             y: v.x * sin + v.y * cos
         };
     }
+
+    static reflectAcrossPoint(p: Vector2D, center: Vector2D): Vector2D {
+        return {
+            x: 2 * center.x - p.x,
+            y: 2 * center.y - p.y
+        };
+    }
 }
