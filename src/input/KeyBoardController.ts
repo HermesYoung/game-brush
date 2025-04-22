@@ -6,24 +6,46 @@ import {Scene} from "../scenes";
 export abstract class KeyBoardController<TControllable extends GameObject | Scene> implements Controller<TControllable> {
     protected keyMap: Map<string, string[]>;
     private readonly defaultKeyMap: Map<string, string[]>;
-    protected keyboardInput: KeyboardInput = new KeyboardInput();
+    private keyboardInput: KeyboardInput = new KeyboardInput();
+
     protected constructor(keyMap: Map<string, string[]>) {
         this.keyMap = keyMap;
         this.defaultKeyMap = new Map(keyMap);
     }
 
-    abstract update(deltaTime: number, gameObject: TControllable): void;
+    abstract updateControllable(deltaTime: number, controllableObject: TControllable): void;
+
+    update(deltaTime: number, controllableObject: TControllable): void {
+        this.updateControllable(deltaTime, controllableObject)
+        this.keyboardInput.update();
+    }
 
     defineNewKey(action: string, key: string): void {
         if (this.keyMap.has(action)) {
             let keys = this.keyMap.get(action)!;
-            if(!keys === undefined && !keys!.includes(key))
+            if (!keys === undefined && !keys!.includes(key))
                 this.keyMap.set(action, [...keys!, key]);
         }
     }
 
+    protected isActionKeysPressed(action: string): boolean {
+        let keys = this.keyMap.get(action);
+        if (keys) {
+            return this.keyboardInput.isAnyPressed(keys);
+        }
+        return false;
+    }
+
+    protected isActionKeysHeld(action: string): boolean {
+        let keys = this.keyMap.get(action);
+        if (keys) {
+            return this.keyboardInput.isAnyHeld(keys);
+        }
+        return false;
+    }
+
     resetKey(action: string): void {
-       this.keyMap.set(action, [...this.defaultKeyMap.get(action)!]);
+        this.keyMap.set(action, [...this.defaultKeyMap.get(action)!]);
     }
 
     resetAllKeys(): void {
