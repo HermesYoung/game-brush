@@ -28,10 +28,6 @@ export class EllipseDrawer implements Drawable{
         this.properties.strokeWidth = width;
     }
 
-    update(transform: Transform2D) {
-        this.transform = transform;
-    }
-
     draw(ctx: CanvasRenderingContext2D): void {
         ctx.save();
         ctx.translate(this.transform.position.x, this.transform.position.y);

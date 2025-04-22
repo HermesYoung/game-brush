@@ -28,7 +28,6 @@ export abstract class RectangleGameObject extends PhysicsBasedObject{
         super.update(deltaTime);
     }
     draw(ctx: CanvasRenderingContext2D): void {
-        this.drawer.update(this.transform);
         this.drawer.draw(ctx);
     }
 }

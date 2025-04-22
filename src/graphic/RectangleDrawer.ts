@@ -8,13 +8,9 @@ export class RectangleDrawer implements Drawable {
 
     constructor(transform: Transform2D, properties: CanvasRectangleProps) {
         this.properties = properties;
-        this.transform = transform ?? {position: {x: 0, y: 0}, rotation: 0};
-    }
-
-
-    update(transform: Transform2D) {
         this.transform = transform;
     }
+
 
     resize(width: number, height: number) {
         this.properties.width = width;
