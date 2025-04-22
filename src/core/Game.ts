@@ -1,4 +1,4 @@
-﻿import {SceneManager} from "../scenes";
+﻿import {Scene, SceneManager} from "../scenes";
 
 export class Game {
     private readonly ctx: CanvasRenderingContext2D;
@@ -6,13 +6,20 @@ export class Game {
     private fps: number = 60;
     private timestep: number = 1000 / this.fps;
     private accumulator: number = 0;
+    private readonly sceneManager: SceneManager;
 
-    constructor(private canvas: HTMLCanvasElement, private sceneManager: SceneManager) {
+    constructor(private canvas: HTMLCanvasElement) {
         this.ctx = canvas.getContext('2d')!;
+        this.sceneManager = new SceneManager();
     }
 
-    start(): void {
+    start(startScene: string): void {
+        this.sceneManager.changeScene(startScene)
         requestAnimationFrame(this.loop);
+    }
+
+    addScene(scene: Scene): void {
+        this.sceneManager.register(scene);
     }
 
     setTargetFPS(fps: number){
