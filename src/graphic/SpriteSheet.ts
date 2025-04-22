@@ -23,10 +23,12 @@ export class SpriteSheet implements Drawable {
         this.image = image;
         this.dimension = dimension;
         this.frameDuration = frameDuration;
-        this.frameSize.width = image.width / dimension.columns;
-        this.frameSize.height = image.height / dimension.rows;
-        this.renderSize.width = this.frameSize.width;
-        this.renderSize.height = this.frameSize.height;
+        image.onload = () => {
+            this.frameSize.width = image.naturalWidth / dimension.columns;
+            this.frameSize.height = image.naturalHeight / dimension.rows;
+            this.renderSize.width = this.frameSize.width;
+            this.renderSize.height = this.frameSize.height;
+        }
     }
 
     setTransform(transform: Transform2D): void {
@@ -36,7 +38,6 @@ export class SpriteSheet implements Drawable {
     update(deltaTime: number): void {
         this.elapsedTime += deltaTime;
         if (this.elapsedTime >= this.frameDuration) {
-            console.log(this.elapsedTime)
             this.currentFrame.x = (this.currentFrame.x + 1) % this.dimension.columns;
             this.elapsedTime = 0;
         }
@@ -52,7 +53,6 @@ export class SpriteSheet implements Drawable {
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
-        console.log(this.currentFrame);
         ctx.save();
         ctx.translate(this.transform.position.x, this.transform.position.y);
         ctx.rotate(this.transform.rotation);
