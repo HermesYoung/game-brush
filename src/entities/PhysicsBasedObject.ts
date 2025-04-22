@@ -1,12 +1,12 @@
 ﻿import {GameObject} from "./GameObject.js";
 import {PhysicsComponent, CollisionBox} from "../physics";
-import {Vector2D} from "../math";
+import {Transform2D} from "../math/Transform2D";
 
 export abstract class PhysicsBasedObject extends GameObject {
     public physicsComponent: PhysicsComponent;
 
-    protected constructor(Position?: Vector2D, rotation?: number, collisionBoxes?: CollisionBox[]) {
-        super(Position, rotation, collisionBoxes);
+    protected constructor(transform: Transform2D, collisionBoxes?: CollisionBox[]) {
+        super(transform, collisionBoxes);
         this.physicsComponent = new PhysicsComponent();
     }
 
@@ -14,9 +14,7 @@ export abstract class PhysicsBasedObject extends GameObject {
 
     update(deltaTime: number): void {
         this.updateBeforePhysics(deltaTime);
-        let updateResult = this.physicsComponent.update(this.position, deltaTime);
-        this.position = updateResult.position;
-        this.rotation = updateResult.rotation;
+        this.physicsComponent.update(this.transform, deltaTime);
         this.updateCollisionBox()
     }
 }

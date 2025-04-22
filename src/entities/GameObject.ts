@@ -1,15 +1,14 @@
 import {Vector2D} from "../math";
 import {CollisionBox} from "../physics";
+import {Transform2D} from "../math/Transform2D";
 
 export abstract class GameObject {
-    position: Vector2D = {x: 0, y: 0};
-    rotation: number = 0;
+    transform: Transform2D;
     isDestroyed: boolean = false;
     collisionBoxes: CollisionBox[] = [];
 
-    protected constructor(position?: Vector2D, rotation?: number, collisionBoxes?: CollisionBox[]) {
-        this.position = position || {x: 0, y: 0};
-        this.rotation = rotation || 0;
+    protected constructor(transform?: Transform2D, collisionBoxes?: CollisionBox[]) {
+        this.transform = transform ?? {position: {x: 0, y: 0}, rotation: 0};
         this.collisionBoxes = collisionBoxes || [];
     }
 
@@ -41,7 +40,7 @@ export abstract class GameObject {
 
     protected updateCollisionBox() {
         this.collisionBoxes.forEach(collisionBox => {
-            collisionBox.reset(this.position, this.rotation)
+            collisionBox.reset(this.transform)
         })
     }
 }

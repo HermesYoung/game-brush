@@ -1,4 +1,5 @@
 import { Vector2D, Vector2DUtils } from "../math";
+import {Transform2D} from "../math/Transform2D";
 
 class LinearMotion {
   velocity: Vector2D = { x: 0, y: 0 };
@@ -13,7 +14,7 @@ class LinearMotion {
     this.frictionCoefficient = frictionCoefficient;
   }
 
-  update(position: Vector2D, deltaTime: number): void {
+  update(transform: Transform2D, deltaTime: number): void {
     const speed = Math.sqrt(this.velocity.x ** 2 + this.velocity.y ** 2);
     if (speed > 0) {
       const frictionMag = this.frictionCoefficient * this.mass;
@@ -26,8 +27,8 @@ class LinearMotion {
     this.velocity.x += this.acceleration.x * deltaTime;
     this.velocity.y += this.acceleration.y * deltaTime;
 
-    position.x += this.velocity.x * deltaTime;
-    position.y += this.velocity.y * deltaTime;
+    transform.position.x += this.velocity.x * deltaTime;
+    transform.position.y += this.velocity.y * deltaTime;
 
     this.acceleration = { x: 0, y: 0 };
   }
@@ -44,7 +45,6 @@ class LinearMotion {
 }
 
 class AngularMotion {
-  rotation: number = 0;
   angularVelocity: number = 0;
   angularAcceleration: number = 0;
   momentOfInertia: number;
@@ -55,14 +55,14 @@ class AngularMotion {
     this.angularDamping = angularDamping;
   }
 
-  update(deltaTime: number): void {
+  update(transform: Transform2D ,deltaTime: number): void {
     if (this.angularVelocity !== 0) {
       const dampingTorque = -this.angularVelocity * this.angularDamping * this.momentOfInertia;
       this.applyTorque(dampingTorque);
     }
 
     this.angularVelocity += this.angularAcceleration * deltaTime;
-    this.rotation += this.angularVelocity * deltaTime;
+    transform.rotation += this.angularVelocity * deltaTime;
     this.angularAcceleration = 0;
   }
 
@@ -71,7 +71,6 @@ class AngularMotion {
   }
 
   reset(): void {
-    this.rotation = 0;
     this.angularVelocity = 0;
     this.angularAcceleration = 0;
   }
@@ -92,10 +91,9 @@ export class PhysicsComponent {
     this.angular = new AngularMotion(momentOfInertia, angularDamping);
   }
 
-  update(position: Vector2D, deltaTime: number): {position: Vector2D, rotation: number} {
-    this.linear.update(position, deltaTime);
-    this.angular.update(deltaTime);
-    return {position, rotation: this.angular.rotation};
+  update(transform: Transform2D, deltaTime: number): void {
+    this.linear.update(transform, deltaTime);
+    this.angular.update(transform, deltaTime);
   }
 
   applyForce(force: Vector2D): void {

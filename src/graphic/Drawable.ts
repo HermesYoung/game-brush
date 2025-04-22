@@ -1,7 +1,6 @@
-﻿import {Vector2D} from "../math";
+﻿import {Transform2D} from "../math/Transform2D";
 
 export interface Drawable {
-    position: Vector2D;
-    rotation: number;
+    transform: Transform2D;
     draw(ctx: CanvasRenderingContext2D): void;
 }

@@ -49,8 +49,8 @@ export class CollisionManager {
             const theta = (i / segments) * 2 * Math.PI;
             const x = ellipse.radiusX * Math.cos(theta);
             const y = ellipse.radiusY * Math.sin(theta);
-            const rotated = Vector2DUtils.rotate({ x, y }, ellipse.rotation);
-            points.push(Vector2DUtils.add(rotated, ellipse.position));
+            const rotated = Vector2DUtils.rotate({ x, y }, ellipse.transform.rotation);
+            points.push(Vector2DUtils.add(rotated, ellipse.transform.position));
         }
         return points;
     }

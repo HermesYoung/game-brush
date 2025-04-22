@@ -1,16 +1,15 @@
 ﻿import {Vector2D} from "../math";
 import {CanvasEllipseProps} from "./CanvasEllipseProps";
 import {Drawable} from "./Drawable";
+import {Transform2D} from "../math/Transform2D";
 
 export class EllipseDrawer implements Drawable{
     properties: CanvasEllipseProps
-    position: Vector2D;
-    rotation: number;
+    transform: Transform2D;
 
-    constructor(position: Vector2D, rotation: number, properties: CanvasEllipseProps) {
+    constructor(transform : Transform2D, properties: CanvasEllipseProps) {
         this.properties = properties;
-        this.position = position;
-        this.rotation = rotation;
+        this.transform = transform ?? {position: {x: 0, y: 0}, rotation: 0};
     }
     resize(radiusX: number, radiusY: number) {
         this.properties.radiusX = radiusX;
@@ -30,16 +29,14 @@ export class EllipseDrawer implements Drawable{
         this.properties.strokeWidth = width;
     }
 
-    update(position: Vector2D, rotation: number) {
-        this.position = position;
-        this.rotation = rotation;
-        console.log(position, rotation);
+    update(transform: Transform2D) {
+        this.transform = transform;
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
         ctx.save();
-        ctx.translate(this.position.x, this.position.y);
-        ctx.rotate(this.rotation);
+        ctx.translate(this.transform.position.x, this.transform.position.y);
+        ctx.rotate(this.transform.rotation);
         ctx.globalAlpha = this.properties.opacity ?? 1;
 
         ctx.beginPath();

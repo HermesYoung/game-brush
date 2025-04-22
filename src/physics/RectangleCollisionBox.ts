@@ -2,29 +2,27 @@
 import {Vector2DUtils, Vector2D} from '../math';
 import {EllipseCollisionBox} from "./EllipseCollisionBox";
 import {CollisionManager} from "./CollisionManager";
+import {Transform2D} from "../math/Transform2D";
 
 export class RectangleCollisionBox implements CollisionBox {
-    position: Vector2D;
     width: number;
     height: number;
-    rotation: number;
+    transform: Transform2D;
 
-    constructor(position: Vector2D, width: number, height: number, rotation: number = 0) {
-        this.position = position;
+    constructor(transform: Transform2D, width: number, height: number) {
         this.width = width;
         this.height = height;
-        this.rotation = rotation;
+        this.transform = transform;
     }
 
-    reset(position: Vector2D, rotation: number): void {
-        this.position = position;
-        this.rotation = rotation;
+    reset(transform: Transform2D): void {
+        this.transform = transform;
     }
 
     getCorners(): Vector2D[] {
         const hw = this.width / 2;
         const hh = this.height / 2;
-        const center = this.position;
+        const center = this.transform.position;
 
         const corners = [
             {x: -hw, y: -hh},
@@ -34,7 +32,7 @@ export class RectangleCollisionBox implements CollisionBox {
         ];
 
         return corners.map(corner => {
-            const rotated = Vector2DUtils.rotate(corner, this.rotation);
+            const rotated = Vector2DUtils.rotate(corner, this.transform.rotation);
             return Vector2DUtils.add(center, rotated);
         });
     }
@@ -103,15 +101,15 @@ export class RectangleCollisionBox implements CollisionBox {
             }
 
             if (mtv) {
-                const direction = Vector2DUtils.subtract(other.position, this.position);
+                const direction = Vector2DUtils.subtract(other.transform.position, this.transform.position);
                 if (Vector2DUtils.dot(direction, mtv) < 0) {
                     mtv = Vector2DUtils.multiply(mtv, -1);
                 }
-                return Vector2DUtils.add(this.position, Vector2DUtils.multiply(mtv, minOverlap / 2));
+                return Vector2DUtils.add(this.transform.position, Vector2DUtils.multiply(mtv, minOverlap / 2));
             }
         } else if (other instanceof EllipseCollisionBox) {
-            const x = Math.max(this.position.x - this.width / 2, Math.min(other.position.x, this.position.x + this.width / 2));
-            const y = Math.max(this.position.y - this.height / 2, Math.min(other.position.y, this.position.y + this.height / 2));
+            const x = Math.max(this.transform.position.x - this.width / 2, Math.min(other.transform.position.x, this.transform.position.x + this.width / 2));
+            const y = Math.max(this.transform.position.y - this.height / 2, Math.min(other.transform.position.y, this.transform.position.y + this.height / 2));
             return { x, y };
         }
         return null;

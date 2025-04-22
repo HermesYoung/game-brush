@@ -1,10 +1,10 @@
 import { Vector2D } from "../math";
+import {Transform2D} from "../math/Transform2D";
 
 export interface CollisionBox {
-    position: Vector2D;
-    rotation: number;
+    transform: Transform2D;
     collidesWith(collisionBox: CollisionBox): boolean;
-    reset(position: Vector2D, rotation: number): void;
+    reset(transform: Transform2D): void;
     getCollisionPoint(other: CollisionBox): Vector2D | null;
     draw(context: CanvasRenderingContext2D): void;
 }
