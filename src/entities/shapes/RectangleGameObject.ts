@@ -1,7 +1,7 @@
 ﻿import {PhysicsBasedObject} from "../PhysicsBasedObject.js";
 import {CollisionBox} from "../../physics";
 import {CanvasRectangleProps, RectangleDrawer} from "../../graphic";
-import {Transform2D} from "../../math/Transform2D";
+import {Transform2D} from "../../math";
 
 export abstract class RectangleGameObject extends PhysicsBasedObject{
     protected drawer: RectangleDrawer;

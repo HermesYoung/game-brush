@@ -1,6 +1,6 @@
 ﻿import {GameObject} from "./GameObject.js";
 import {PhysicsComponent, CollisionBox} from "../physics";
-import {Transform2D} from "../math/Transform2D";
+import {Transform2D} from "../math";
 
 export abstract class PhysicsBasedObject extends GameObject {
     public physicsComponent: PhysicsComponent;

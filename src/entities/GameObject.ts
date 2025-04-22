@@ -1,6 +1,5 @@
-import {Vector2D} from "../math";
+import {Transform2D, Vector2D} from "../math";
 import {CollisionBox} from "../physics";
-import {Transform2D} from "../math/Transform2D";
 
 export abstract class GameObject {
     transform: Transform2D;

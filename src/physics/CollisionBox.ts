@@ -1,5 +1,4 @@
-import { Vector2D } from "../math";
-import {Transform2D} from "../math/Transform2D";
+import { Vector2D, Transform2D } from "../math";
 
 export interface CollisionBox {
     transform: Transform2D;

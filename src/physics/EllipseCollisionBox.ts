@@ -1,8 +1,7 @@
-﻿import {Vector2D, Vector2DUtils} from "../math";
+﻿import {Vector2D, Vector2DUtils, Transform2D} from "../math";
 import { CollisionBox } from "./CollisionBox";
 import { RectangleCollisionBox } from "./RectangleCollisionBox";
 import {CollisionManager} from "./CollisionManager";
-import {Transform2D} from "../math/Transform2D";
 
 export class EllipseCollisionBox implements CollisionBox {
     transform: Transform2D;

@@ -1,8 +1,7 @@
 ﻿import {CollisionBox} from './CollisionBox.js';
-import {Vector2DUtils, Vector2D} from '../math';
+import {Vector2DUtils, Vector2D, Transform2D} from '../math';
 import {EllipseCollisionBox} from "./EllipseCollisionBox";
 import {CollisionManager} from "./CollisionManager";
-import {Transform2D} from "../math/Transform2D";
 
 export class RectangleCollisionBox implements CollisionBox {
     width: number;

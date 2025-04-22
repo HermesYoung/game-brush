@@ -1,7 +1,6 @@
-﻿import {Vector2D} from "../math";
-import {CanvasEllipseProps} from "./CanvasEllipseProps";
+﻿import {CanvasEllipseProps} from "./CanvasEllipseProps";
 import {Drawable} from "./Drawable";
-import {Transform2D} from "../math/Transform2D";
+import {Transform2D} from "../math";
 
 export class EllipseDrawer implements Drawable{
     properties: CanvasEllipseProps

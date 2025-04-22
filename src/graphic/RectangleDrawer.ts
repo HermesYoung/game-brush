@@ -1,6 +1,6 @@
 ﻿import {Drawable} from "./Drawable";
 import {CanvasRectangleProps} from "./CanvasRectangleProps";
-import {Transform2D} from "../math/Transform2D";
+import {Transform2D} from "../math";
 
 export class RectangleDrawer implements Drawable {
     properties: CanvasRectangleProps

@@ -2,3 +2,4 @@
 export * from './CanvasEllipseProps'
 export * from './CanvasRectangleProps'
 export * from './RectangleDrawer'
+export * from './EllipseDrawer'

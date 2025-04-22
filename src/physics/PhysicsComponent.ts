@@ -1,5 +1,4 @@
-import { Vector2D, Vector2DUtils } from "../math";
-import {Transform2D} from "../math/Transform2D";
+import { Vector2D, Vector2DUtils, Transform2D } from "../math";
 
 class LinearMotion {
   velocity: Vector2D = { x: 0, y: 0 };

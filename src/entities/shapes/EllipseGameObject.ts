@@ -1,7 +1,7 @@
 ﻿import {PhysicsBasedObject} from "../PhysicsBasedObject";
-import {CanvasEllipseProps} from "../../graphic";
-import {EllipseDrawer} from "../../graphic/EllipseDrawer";
-import {Transform2D} from "../../math/Transform2D";
+import {CanvasEllipseProps, EllipseDrawer} from "../../graphic";
+import {Transform2D} from "../../math";
+
 
 export abstract class EllipseGameObject extends PhysicsBasedObject{
     private drawer: EllipseDrawer;

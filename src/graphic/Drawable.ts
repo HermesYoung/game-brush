@@ -1,4 +1,4 @@
-﻿import {Transform2D} from "../math/Transform2D";
+﻿import {Transform2D} from "../math";
 
 export interface Drawable {
     transform: Transform2D;
