@@ -21,7 +21,7 @@ export class RectangleCollisionBox implements CollisionBox {
     getCorners(): Vector2D[] {
         const hw = this.width / 2;
         const hh = this.height / 2;
-        const center = this.transform.position;
+        const center = this.transform.getWorldPosition();
 
         const corners = [
             {x: -hw, y: -hh},
@@ -31,7 +31,7 @@ export class RectangleCollisionBox implements CollisionBox {
         ];
 
         return corners.map(corner => {
-            const rotated = Vector2DUtils.rotate(corner, this.transform.rotation);
+            const rotated = Vector2DUtils.rotate(corner, this.transform.getWorldRotation());
             return Vector2DUtils.add(center, rotated);
         });
     }
@@ -84,6 +84,9 @@ export class RectangleCollisionBox implements CollisionBox {
     getCollisionPoint(other: CollisionBox): Vector2D | null {
         if (!this.collidesWith(other)) return null;
 
+        let position = this.transform.getWorldPosition();
+        let otherPosition = other.transform.getWorldPosition();
+
         if (other instanceof RectangleCollisionBox) {
             const axes = [...this.getAxes(), ...other.getAxes()];
             let minOverlap = Infinity;
@@ -100,15 +103,15 @@ export class RectangleCollisionBox implements CollisionBox {
             }
 
             if (mtv) {
-                const direction = Vector2DUtils.subtract(other.transform.position, this.transform.position);
+                const direction = Vector2DUtils.subtract(otherPosition, position);
                 if (Vector2DUtils.dot(direction, mtv) < 0) {
                     mtv = Vector2DUtils.multiply(mtv, -1);
                 }
-                return Vector2DUtils.add(this.transform.position, Vector2DUtils.multiply(mtv, minOverlap / 2));
+                return Vector2DUtils.add(position, Vector2DUtils.multiply(mtv, minOverlap / 2));
             }
         } else if (other instanceof EllipseCollisionBox) {
-            const x = Math.max(this.transform.position.x - this.width / 2, Math.min(other.transform.position.x, this.transform.position.x + this.width / 2));
-            const y = Math.max(this.transform.position.y - this.height / 2, Math.min(other.transform.position.y, this.transform.position.y + this.height / 2));
+            const x = Math.max(position.x - this.width / 2, Math.min(otherPosition.x, position.x + this.width / 2));
+            const y = Math.max(position.y - this.height / 2, Math.min(otherPosition.y, position.y + this.height / 2));
             return { x, y };
         }
         return null;

@@ -20,22 +20,26 @@ export class EllipseCollisionBox implements CollisionBox {
 
     getCollisionPoint(other: CollisionBox): Vector2D | null {
         if (!this.collidesWith(other)) return null;
+        let rotation = this.transform.getWorldRotation();
+        let position = this.transform.getWorldPosition();
+        const toLocal = (point: Vector2D): Vector2D => {
 
-        const toLocal = (point: Vector2D): Vector2D =>
-            Vector2DUtils.rotate(Vector2DUtils.subtract(point, this.transform.position), -this.transform.rotation);
+            return  Vector2DUtils.rotate(Vector2DUtils.subtract(point, position), -rotation);
+        }
 
         const toWorld = (point: Vector2D): Vector2D =>
-            Vector2DUtils.add(Vector2DUtils.rotate(point, this.transform.rotation), this.transform.position);
+            Vector2DUtils.add(Vector2DUtils.rotate(point, rotation), position);
 
+        let otherPosition = other.transform.getWorldPosition();
         if (other instanceof EllipseCollisionBox) {
-            const delta = toLocal(other.transform.position);
+            const delta = toLocal(otherPosition);
             const norm = Math.sqrt((delta.x * delta.x) / (this.radiusX * this.radiusX) + (delta.y * delta.y) / (this.radiusY * this.radiusY));
             const direction = Vector2DUtils.divide(delta, norm);
             return toWorld(direction);
         }
 
         if (other instanceof RectangleCollisionBox) {
-            const local = toLocal(other.transform.position);
+            const local = toLocal(otherPosition);
             const norm = Math.sqrt(local.x * local.x + local.y * local.y);
             const direction = Vector2DUtils.divide(local, norm);
             const scaled = {
@@ -54,8 +58,10 @@ export class EllipseCollisionBox implements CollisionBox {
 
     draw(context: CanvasRenderingContext2D): void {
         context.save();
-        context.translate(this.transform.position.x, this.transform.position.y);
-        context.rotate(this.transform.rotation);
+        let rotation = this.transform.getWorldRotation();
+        let position = this.transform.getWorldPosition();
+        context.translate(position.x, position.y);
+        context.rotate(rotation);
         context.beginPath();
         context.ellipse(0, 0, this.radiusX, this.radiusY, 0, 0, Math.PI * 2);
         context.strokeStyle = "black";
