@@ -3,7 +3,7 @@ import {KeyboardInput} from "./KeyboardInput.js";
 import {GameObject} from "../entities";
 import {Scene} from "../scenes";
 
-export abstract class KeyBoardController<TControllable extends GameObject | Scene> implements Controller<TControllable> {
+export abstract class KeyboardController<TControllable extends GameObject | Scene> implements Controller<TControllable> {
     protected keyMap: Map<string, string[]>;
     private readonly defaultKeyMap: Map<string, string[]>;
     private keyboardInput: KeyboardInput = new KeyboardInput();
@@ -28,7 +28,7 @@ export abstract class KeyBoardController<TControllable extends GameObject | Scen
         }
     }
 
-    protected isActionKeysPressed(action: string): boolean {
+    protected isActionKeyPressed(action: string): boolean {
         let keys = this.keyMap.get(action);
         if (keys) {
             return this.keyboardInput.isAnyPressed(keys);
@@ -36,7 +36,7 @@ export abstract class KeyBoardController<TControllable extends GameObject | Scen
         return false;
     }
 
-    protected isActionKeysHeld(action: string): boolean {
+    protected isActionKeyHeld(action: string): boolean {
         let keys = this.keyMap.get(action);
         if (keys) {
             return this.keyboardInput.isAnyHeld(keys);
