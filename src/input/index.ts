@@ -1,2 +1,4 @@
 ﻿export * from './Controller';
-export * from './KeyBoardController'
+export * from './KeyboardController';
+export * from './MouseButton';
+export * from './MouseController';
