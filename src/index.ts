@@ -6,4 +6,5 @@ export * from './physics';
 export * from './scenes';
 export * from './utils';
 export * from './graphic'
+export * from './audio'
 
