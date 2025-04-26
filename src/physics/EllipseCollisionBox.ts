@@ -20,8 +20,8 @@ export class EllipseCollisionBox implements CollisionBox {
 
     getCollisionPoint(other: CollisionBox): Vector2D | null {
         if (!this.collidesWith(other)) return null;
-        let rotation = this.transform.getWorldRotation();
-        let position = this.transform.getWorldPosition();
+        const rotation = this.transform.getWorldRotation();
+        const position = this.transform.getWorldPosition();
         const toLocal = (point: Vector2D): Vector2D => {
 
             return  Vector2DUtils.rotate(Vector2DUtils.subtract(point, position), -rotation);
@@ -30,7 +30,7 @@ export class EllipseCollisionBox implements CollisionBox {
         const toWorld = (point: Vector2D): Vector2D =>
             Vector2DUtils.add(Vector2DUtils.rotate(point, rotation), position);
 
-        let otherPosition = other.transform.getWorldPosition();
+        const otherPosition = other.transform.getWorldPosition();
         if (other instanceof EllipseCollisionBox) {
             const delta = toLocal(otherPosition);
             const norm = Math.sqrt((delta.x * delta.x) / (this.radiusX * this.radiusX) + (delta.y * delta.y) / (this.radiusY * this.radiusY));
@@ -58,8 +58,8 @@ export class EllipseCollisionBox implements CollisionBox {
 
     draw(context: CanvasRenderingContext2D): void {
         context.save();
-        let rotation = this.transform.getWorldRotation();
-        let position = this.transform.getWorldPosition();
+        const rotation = this.transform.getWorldRotation();
+        const position = this.transform.getWorldPosition();
         context.translate(position.x, position.y);
         context.rotate(rotation);
         context.beginPath();

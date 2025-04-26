@@ -32,9 +32,9 @@ export abstract class GameObject {
     }
 
     public getCollisionPoint(other: GameObject): Vector2D | null {
-        for (let thisBox of this.collisionBoxes) {
-            for (let otherBox of other.collisionBoxes) {
-                let points = thisBox.getCollisionPoint(otherBox)
+        for (const thisBox of this.collisionBoxes) {
+            for (const otherBox of other.collisionBoxes) {
+                const points = thisBox.getCollisionPoint(otherBox)
                 if (points) {
                     return points;
                 }
@@ -44,7 +44,7 @@ export abstract class GameObject {
     }
 
     protected drawCollisionBoxes(ctx: CanvasRenderingContext2D): void {
-        for (let box of this.collisionBoxes) {
+        for (const box of this.collisionBoxes) {
             box.draw(ctx);
         }
     }

@@ -84,8 +84,8 @@ export class RectangleCollisionBox implements CollisionBox {
     getCollisionPoint(other: CollisionBox): Vector2D | null {
         if (!this.collidesWith(other)) return null;
 
-        let position = this.transform.getWorldPosition();
-        let otherPosition = other.transform.getWorldPosition();
+        const position = this.transform.getWorldPosition();
+        const otherPosition = other.transform.getWorldPosition();
 
         if (other instanceof RectangleCollisionBox) {
             const axes = [...this.getAxes(), ...other.getAxes()];

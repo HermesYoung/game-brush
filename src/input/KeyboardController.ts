@@ -24,12 +24,13 @@ export abstract class KeyboardController<TControllable extends GameObject | Scen
         if (this.keyMap.has(action)) {
             let keys = this.keyMap.get(action)!;
             if (!keys === undefined && !keys!.includes(key))
+            const keys = this.keyMap.get(action);
                 this.keyMap.set(action, [...keys!, key]);
         }
     }
 
     protected isActionKeyPressed(action: string): boolean {
-        let keys = this.keyMap.get(action);
+        const keys = this.keyMap.get(action);
         if (keys) {
             return this.keyboardInput.isAnyPressed(keys);
         }
@@ -37,7 +38,7 @@ export abstract class KeyboardController<TControllable extends GameObject | Scen
     }
 
     protected isActionKeyHeld(action: string): boolean {
-        let keys = this.keyMap.get(action);
+        const keys = this.keyMap.get(action);
         if (keys) {
             return this.keyboardInput.isAnyHeld(keys);
         }
