@@ -23,7 +23,8 @@ export abstract class Spawner extends GameObject {
     super.update(deltaTime);
   }
 
-  drawObject(ctx: CanvasRenderingContext2D) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  drawObject(_ctx: CanvasRenderingContext2D) {
     return
   }
 

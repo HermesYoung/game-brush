@@ -22,9 +22,8 @@ export abstract class KeyboardController<TControllable extends GameObject | Scen
 
     defineNewKey(action: string, key: string): void {
         if (this.keyMap.has(action)) {
-            let keys = this.keyMap.get(action)!;
-            if (!keys === undefined && !keys!.includes(key))
             const keys = this.keyMap.get(action);
+            if (!keys && !keys!.includes(key))
                 this.keyMap.set(action, [...keys!, key]);
         }
     }
