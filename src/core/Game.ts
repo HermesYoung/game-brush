@@ -1,4 +1,5 @@
 ﻿import {Scene, SceneManager} from "../scenes";
+import {MouseInput} from "../input/MouseInput";
 
 export class Game {
     private readonly ctx: CanvasRenderingContext2D;
@@ -11,6 +12,7 @@ export class Game {
     constructor(private canvas: HTMLCanvasElement) {
         this.ctx = canvas.getContext('2d')!;
         this.sceneManager = new SceneManager();
+        MouseInput.initialize(canvas);
     }
 
     start(startScene: string): void {

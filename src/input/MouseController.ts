@@ -8,9 +8,10 @@ import {Vector2D} from "../math";
 export abstract class MouseController<TControllable extends GameObject | Scene> implements Controller<TControllable> {
     private mouseInput: MouseInput;
 
-    protected constructor(canvas: HTMLCanvasElement) {
-        this.mouseInput = new MouseInput(canvas);
+    protected constructor() {
+        this.mouseInput = MouseInput.instance;
     }
+
     abstract updateControllable(deltaTime: number, controllableObject: TControllable): void;
 
     update(deltaTime: number, gameObject: TControllable): void {
@@ -19,20 +20,14 @@ export abstract class MouseController<TControllable extends GameObject | Scene> 
     }
 
     protected isButtonPressed(action: MouseButton): boolean {
-        if (action) {
-            return this.mouseInput.isPressed(action);
-        }
-        return false;
+        return this.mouseInput.isPressed(action);
     }
 
     protected isButtonHeld(action: MouseButton): boolean {
-        if (action) {
-            return this.mouseInput.isHeld(action);
-        }
-        return false;
+        return this.mouseInput.isHeld(action);
     }
 
-    protected getMousePosition(): Vector2D{
+    protected getMousePosition(): Vector2D {
         return this.mouseInput.mousePosition;
     }
 }

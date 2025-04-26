@@ -6,7 +6,7 @@ import {Scene} from "../scenes";
 export abstract class KeyboardController<TControllable extends GameObject | Scene> implements Controller<TControllable> {
     protected keyMap: Map<string, string[]>;
     private readonly defaultKeyMap: Map<string, string[]>;
-    private keyboardInput: KeyboardInput = new KeyboardInput();
+    private keyboardInput: KeyboardInput = KeyboardInput.instance;
 
     protected constructor(keyMap: Map<string, string[]>) {
         this.keyMap = keyMap;
